@@ -5,7 +5,11 @@ import PackageDescription
 
 let package = Package(
     name: "confiance",
+    platforms: [
+        .macOS(.v14)
+    ],
     dependencies: [
+        .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0-alpha.3"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
     ],
     targets: [
@@ -15,6 +19,7 @@ let package = Package(
             name: "confiance",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "Hummingbird", package: "hummingbird")
             ]
         ),
     ]
