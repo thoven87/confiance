@@ -8,14 +8,14 @@
 import Foundation
 import Hummingbird
 
-enum FeatureState: Encodable {
+enum FeatureState: Encodable, Decodable {
     case archived
     case active
     case draft
     case deleted
 }
 
-struct Schema: Encodable {
+struct Schema: Encodable, Decodable {
     /// Schema
     var schema: String
     /// date
@@ -25,26 +25,26 @@ struct Schema: Encodable {
     var enabled: Bool
 }
 
-struct ScheduleRule: Encodable {
+struct ScheduleRule: Encodable, Decodable {
     /// Timestamp
     var timestamp: Int
     /// Enabled
     var enabled: Bool
 }
 
-enum Targeting: Encodable {
+enum Targeting: Encodable, Decodable {
     case all
     case any
     case none
 }
 
-enum RuleType: Encodable {
+enum RuleType: Encodable, Decodable {
     case rollout
     case force
     case experiment
 }
 
-struct ExperimentRule: Encodable {
+struct ExperimentRule: Encodable, Decodable {
     /// ID
     var id: UUID
     /// description
@@ -86,7 +86,7 @@ struct Feature {
     var enviromentSettings: [String: ExperimentRule]
 }
 
-extension Feature: HBResponseEncodable, Equatable {
+extension Feature: HBResponseEncodable, Decodable, Equatable {
     
     /// TODO finish writting compare function
     static func == (lhs: Feature, rhs: Feature) -> Bool {

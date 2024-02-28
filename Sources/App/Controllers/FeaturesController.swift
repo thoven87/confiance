@@ -13,12 +13,17 @@ struct FeaturesController<Context: HBRequestContext, Repository: FeatureReposito
     
     func addRoutes(to group: HBRouterGroup<Context>) {
         group
-            .get(use: all)
+            .get(use: self.list)
+            .post(use: self.create)
     }
     
-    @Sendable func all(req: HBRequest, context: Context) async throws -> HBEditedResponse<Feature> {
+    @Sendable func list(req: HBRequest, context: Context) async throws -> [Feature] {
+        return try await self.repository.list()
+    }
+    
+    @Sendable func create(req: HBRequest, context: Context) async throws -> HBEditedResponse<Feature> {
         let content = try await req.decode(as: CreateFeatureRequest.self, context: context)
-        
+
         let feature = try await self.repository.create(
             state: FeatureState.draft,
             description: content.description,
@@ -28,6 +33,5 @@ struct FeaturesController<Context: HBRequestContext, Repository: FeatureReposito
         )
         
         return HBEditedResponse(status: .created, response: feature)
-        
     }
 }

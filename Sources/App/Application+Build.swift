@@ -1,10 +1,11 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-// 
-// Swift Argument Parser
-// https://swiftpackageindex.com/apple/swift-argument-parser/documentation
+//
+//  File.swift
+//  
+//
+//  Created by Stevenson Michel on 2/22/24.
+//
 
-import ArgumentParser
+import Foundation
 import Hummingbird
 import Logging
 
@@ -14,28 +15,10 @@ protocol AppArguments {
     var inMemoryTesting: Bool { get }
 }
 
-@main
-struct confiance: AsyncParsableCommand, AppArguments {
-    
-    @Option(name: .shortAndLong)
-    var hostname: String = "127.0.0.1"
-    
-    @Option(name: .shortAndLong)
-    var port: Int = 7090
-    
-    @Flag
-    var inMemoryTesting: Bool = false
-    
-    func run() async throws {
-        let app = try await buildApplication(self)
-        
-        try await app.runService()
-    }
-}
 
 /// Build an HBApplication
 func buildApplication(_ args: AppArguments) async throws -> some HBApplicationProtocol {
-    var logger = Logger(label: "Confiance")
+    var logger = Logger(label: "confiance")
     logger.logLevel = .debug
     
     /// create router
@@ -47,7 +30,7 @@ func buildApplication(_ args: AppArguments) async throws -> some HBApplicationPr
     
     /// Add health router
     router.get("/health") { _, _ in
-        "PONG\n"
+        return HTTPResponse.Status.ok
     }
     
     /// create application
@@ -61,9 +44,13 @@ func buildApplication(_ args: AppArguments) async throws -> some HBApplicationPr
         logger: logger
     )
     
-    let repository: FeatureMemoryRepository = FeatureMemoryRepository()
     
-    FeaturesController(repository: repository).addRoutes(to: router.group("features"))
+    //let api = router.group("api/v1")
+    
+    let repository: FeatureMemoryRepository = FeatureMemoryRepository()
+    let apiV1Routes = router.group("api/v1")
+    
+    FeaturesController(repository: repository).addRoutes(to: apiV1Routes.group("features"))
     
     /// return app
     return app
