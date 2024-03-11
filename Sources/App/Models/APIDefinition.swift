@@ -9,6 +9,6 @@ import Foundation
 
 struct CreateFeatureRequest: Decodable, Encodable {
     let description: String
-    let state: String // TODO: masp string to FeatureState enum
+    let state: String // TODO: map string to FeatureState enum
     let tags: [String]
 }

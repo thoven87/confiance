@@ -24,33 +24,30 @@ func buildApplication(_ args: AppArguments) async throws -> some HBApplicationPr
     /// create router
     let router = HBRouter()
     
+    /// Repository
+    let repository: FeatureMemoryRepository = FeatureMemoryRepository()
+    
     /// add middleware
     router.middlewares.add(HBLogRequestsMiddleware(.info))
-    
     
     /// Add health router
     router.get("/health") { _, _ in
         return HTTPResponse.Status.ok
     }
     
+    let apiV1Routes = router.group("api/v1")
+    FeaturesController(repository: repository).addRoutes(to: apiV1Routes.group("features"))
+    
     /// create application
     let app = HBApplication(
         router: router,
         configuration: .init(
             address: .hostname(args.hostname, port: args.port),
-            serverName: "[Confiance]",
+            serverName: "confiance",
             reuseAddress: true
         ),
         logger: logger
     )
-    
-    
-    //let api = router.group("api/v1")
-    
-    let repository: FeatureMemoryRepository = FeatureMemoryRepository()
-    let apiV1Routes = router.group("api/v1")
-    
-    FeaturesController(repository: repository).addRoutes(to: apiV1Routes.group("features"))
     
     /// return app
     return app

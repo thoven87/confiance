@@ -8,7 +8,7 @@
 import Foundation
 import Hummingbird
 
-enum FeatureState: Encodable, Decodable {
+enum FeatureState: String, Encodable, Decodable {
     case archived
     case active
     case draft
